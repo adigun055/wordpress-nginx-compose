@@ -19,22 +19,25 @@ services:
       - db
     environment:
       WORDPRESS_DB_HOST: db:3306
-      WORDPRESS_DB_USER: wp_user
+      WORDPRESS_DB_USER_FILE: /run/secrets/mysql_user
       WORDPRESS_DB_NAME: wp_database
-      WORDPRESS_DB_PASSWORD: wp_password
+      WORDPRESS_DB_PASSWORD_FILE: /run/secrets/mysql_password
     restart: unless-stopped
     volumes:
       - wordpress:/var/www/html
     networks:
       - wordpress
+    secrets:
+      - mysql_user
+      - mysql_password
 
   db:
     image: mariadb
     environment:
       MYSQL_ROOT_PASSWORD: mysql_password
       MYSQL_DATABASE: wp_database
-      MYSQL_USER: wp_user
-      MYSQL_PASSWORD: wp_password
+      MYSQL_USER: /run/secrets/mysql_user
+      MYSQL_PASSWORD_FILE: /run/secrets/mysql_password
     restart: unless-stopped
     volumes:
       - dbdata:/var/lib/mysql
@@ -47,3 +50,11 @@ networks:
    wordpress:
      name: wordpress
      driver: bridge
+
+# external: true telling compose secrets are already created and not to create a new one.
+# secrets will have to be created before running compose.
+secrets:
+  mysql_user:
+    external: true
+  mysql_password:
+    external: true
