@@ -49,7 +49,7 @@ volumes:
 networks:
    wordpress:
      name: wordpress
-     driver: bridge
+     driver: overlay
 
 # external: true telling compose secrets are already created and not to create a new one.
 # secrets will have to be created before running compose.
